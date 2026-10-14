@@ -1073,6 +1073,18 @@ export class FieldOpenApiV2Service {
             }
             vo.options = nextOptions as IFieldVo['options'];
           }
+          // Source enrichment can reintroduce a scalar numeric display removed by the mapper.
+          const showAs = (vo.options as Record<string, unknown>).showAs;
+          if (
+            !vo.isConditionalLookup &&
+            vo.isMultipleCellValue &&
+            (vo.cellValueType ?? sourceVo.cellValueType) === CellValueType.Number &&
+            showAs &&
+            typeof showAs === 'object' &&
+            'showValue' in showAs
+          ) {
+            delete (vo.options as Record<string, unknown>).showAs;
+          }
           vo.options = this.denormalizeLegacyTimeZone(vo.options) as IFieldVo['options'];
         }
 
@@ -1197,6 +1209,26 @@ export class FieldOpenApiV2Service {
         ...(currentTableId ? { [TeableSpanAttributes.TABLE_ID]: currentTableId } : {}),
       }
     );
+    if (mappedField.type === FieldType.ConditionalRollup && !mappedField.name) {
+      const config = mappedField.config as
+        | { foreignTableId?: string; lookupFieldId?: string }
+        | undefined;
+      if (config?.foreignTableId && config.lookupFieldId) {
+        const foreignTableId = TableId.create(config.foreignTableId);
+        if (foreignTableId.isOk()) {
+          const foreignTable = await tableQueryService.getById(context, foreignTableId.value);
+          if (foreignTable.isErr()) {
+            throwV2Error(foreignTable.error, mapDomainErrorToHttpStatus(foreignTable.error));
+          }
+          const lookupField = foreignTable.value
+            .getFields()
+            .find((field) => field.id().toString() === config.lookupFieldId);
+          if (lookupField) {
+            mappedField.name = `${lookupField.name().toString()} Reference (${foreignTable.value.name().toString()})`;
+          }
+        }
+      }
+    }
     const v2Field = await withV2Span(
       context,
       'completeLegacyLinkDbConfigForCreate',

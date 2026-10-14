@@ -15,6 +15,7 @@
     "delete": "Supprimer",
     "clear": "Effacer",
     "cancel": "Annuler",
+    "undo": "Annuler",
     "zoomIn": "Zoomer",
     "zoomOut": "Dézoomer",
     "back": "Retour",
@@ -570,7 +571,6 @@
     "overLimitsDescription": "Votre abonnement actuel a dépassé sa limite d'utilisation. Veuillez mettre à niveau votre plan pour continuer à utiliser cette fonctionnalité sans interruption.",
     "userLimitExceededDescription": "L'instance actuelle a atteint le nombre maximum d'utilisateurs autorisés par votre licence. Veuillez désactiver certains utilisateurs ou mettre à niveau la licence.",
     "unavailableInPlanTips": "Le plan d'abonnement actuel ne prend pas en charge cette fonctionnalité",
-    "unavailableConnectionTips": "La fonctionnalité de connexion de base de données sera supprimée et ne sera disponible que dans la version Entreprise et les versions auto-hébergées.",
     "levelTips": "Cet espace est actuellement sur le plan {{level}}",
     "enterpriseFeature": "Fonctionnalité Enterprise",
     "automationRequiresUpgrade": "Passez à Enterprise Edition (EE) pour activer l'automatisation",
@@ -1599,6 +1599,10 @@
   },
   "chat": {
     "serverError": "Une erreur serveur s’est produite",
+    "chatGone": "Cette conversation n’existe plus",
+    "chatGoneDescription": "Elle a été supprimée depuis un autre onglet ou appareil ; plus rien ne peut être envoyé ici.",
+    "chatArchived": "Cette conversation est archivée",
+    "chatArchivedDescription": "Impossible d’envoyer un message dans une conversation archivée.",
     "modelNotSupported": "Le modèle sélectionné n’est pas pris en charge en mode agent. Passez à GPT-6 Astra pour une expérience optimale.",
     "byokModelNotSupported": "Votre modèle personnalisé n’est pas compatible avec le mode agent. Passez à GPT-6 Astra pour une expérience optimale.",
     "modelServiceUnavailable": "Le service du modèle est temporairement indisponible. Réessayez plus tard.",
@@ -1832,5 +1836,13 @@
       "summaryTitle": "Teable",
       "summary": "{{count}} conversations ont du nouveau."
     }
+  },
+  "cookieConsent": {
+    "title": "Consentement aux cookies",
+    "body": "Nous utilisons des cookies et des technologies similaires pour comprendre l'utilisation de Teable, améliorer votre expérience et mesurer notre marketing.",
+    "accept": "Tout accepter",
+    "reject": "Tout refuser",
+    "policy": "Politique relative aux cookies",
+    "settings": "Paramètres des cookies"
   }
 }

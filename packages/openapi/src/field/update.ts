@@ -12,7 +12,7 @@ export const UpdateFieldRoute: RouteConfig = registerRoute({
   path: UPDATE_FIELD,
   summary: 'Update field',
   description:
-    'Update common properties of a field (name, description, dbFieldName). For other property changes, use the convert field API',
+    'Update field properties. Formula options can be patched without using field conversion.',
   request: {
     params: z.object({
       tableId: z.string(),

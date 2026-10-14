@@ -179,7 +179,7 @@ const setRawFieldValue = async (
   `.execute(ctx.testContainer.db);
 };
 
-describe('duplicateTable (e2e)', () => {
+describe('[B07] duplicateTable (e2e)', () => {
   let ctx: SharedTestContext;
 
   beforeAll(async () => {

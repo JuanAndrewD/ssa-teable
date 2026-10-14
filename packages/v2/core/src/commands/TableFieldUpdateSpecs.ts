@@ -33,7 +33,6 @@ import { DateDefaultValue } from '../domain/table/fields/types/DateDefaultValue'
 import { DateField } from '../domain/table/fields/types/DateField';
 import { DateTimeFormatting } from '../domain/table/fields/types/DateTimeFormatting';
 import { FieldColor, fieldColorValues } from '../domain/table/fields/types/FieldColor';
-import { FieldCondition } from '../domain/table/fields/types/FieldCondition';
 import { FieldNotNull } from '../domain/table/fields/types/FieldNotNull';
 import { FieldUnique } from '../domain/table/fields/types/FieldUnique';
 import { FormulaExpression } from '../domain/table/fields/types/FormulaExpression';
@@ -1193,7 +1192,12 @@ class UpdateLastModifiedTimeFieldSpec implements IUpdateTableFieldSpec {
         name: nextName,
         formatting: nextFormatting,
         trackedFieldIds: nextTrackedFieldIds,
-        meta: currentField.meta(),
+        // Only carry the stored meta across when tracking is untouched. Narrowing
+        // trackedFieldIds has to flip the physical column from GENERATED to a
+        // plain stored column, and reusing the previous meta (which still says
+        // persistedAsGeneratedColumn) would leave the generated column in place
+        // so every write kept stamping the value regardless of the tracking list.
+        meta: trackedChanged ? undefined : currentField.meta(),
       });
       if (updatedFieldResult.isErr()) return err(updatedFieldResult.error);
       specs.push(TableUpdateFieldTypeSpec.create(currentField, updatedFieldResult.value));
@@ -1301,7 +1305,9 @@ class UpdateLastModifiedByFieldSpec implements IUpdateTableFieldSpec {
         id: currentField.id(),
         name: nextName,
         trackedFieldIds: nextTrackedFieldIds,
-        meta: currentField.meta(),
+        // See UpdateLastModifiedTimeFieldSpec: trackedFieldIds decides whether the
+        // column is GENERATED, so the stale meta must not be reused here.
+        meta: undefined,
       });
       if (updatedFieldResult.isErr()) return err(updatedFieldResult.error);
       specs.push(TableUpdateFieldTypeSpec.create(currentField, updatedFieldResult.value));
@@ -1825,7 +1831,7 @@ class UpdateConditionalRollupFieldSpec implements IUpdateTableFieldSpec {
     const currentTimeZone = currentField.timeZone();
     const currentFormatting = currentField.formatting();
     const currentShowAs = currentField.showAs();
-    let nextConfig = this.configValue ?? currentConfig;
+    const nextConfig = this.configValue ?? currentConfig;
     const nextExpression = this.expressionValue ?? currentExpression;
     const nextTimeZone = this.timeZoneValue ?? currentTimeZone;
     let nextFormatting = this.formattingValue ?? currentFormatting;
@@ -1838,38 +1844,7 @@ class UpdateConditionalRollupFieldSpec implements IUpdateTableFieldSpec {
     // for the new expression (e.g. max(DateTime) should be DateTime, not max(Number)=Number).
     const valuesTypeResult = this.resolveValuesType(currentField, nextConfig);
 
-    // When expression changes to single-value aggregation, clear sort/limit from condition
-    if (this.expressionValue !== undefined && !this.expressionValue.equals(currentExpression)) {
-      if (valuesTypeResult.isOk()) {
-        const parsedTypeResult = nextExpression.getParsedValueType(valuesTypeResult.value);
-        if (parsedTypeResult.isOk()) {
-          const willBeSingleValue = !parsedTypeResult.value.isMultipleCellValue.toBoolean();
-          const condition = nextConfig.condition();
-
-          if (willBeSingleValue && (condition.hasSort() || condition.hasLimit())) {
-            // Clear sort and limit from condition
-            const conditionDto = condition.toDto();
-            const clearedConditionResult = FieldCondition.create({
-              ...conditionDto,
-              sort: undefined,
-              limit: undefined,
-            });
-            if (clearedConditionResult.isErr()) return err(clearedConditionResult.error);
-
-            const clearedConfigResult = ConditionalRollupConfig.create({
-              ...nextConfig.toDto(),
-              condition: clearedConditionResult.value.toDto(),
-            });
-            if (clearedConfigResult.isErr()) return err(clearedConfigResult.error);
-            nextConfig = clearedConfigResult.value;
-          }
-        }
-      }
-    }
-
-    const configChanged =
-      (this.configValue !== undefined && !this.configValue.equals(currentConfig)) ||
-      !nextConfig.equals(currentConfig);
+    const configChanged = !nextConfig.equals(currentConfig);
     const expressionChanged =
       this.expressionValue !== undefined && !this.expressionValue.equals(currentExpression);
     const timeZoneChanged =
@@ -2073,6 +2048,21 @@ class UpdateSingleSelectFieldSpec implements IUpdateTableFieldSpec {
       );
     }
 
+    // Resolve the requested default change once so the option rewrite and the
+    // default write agree on it. When both arrive in one payload they are
+    // emitted as a single spec, because a rename plus a re-point is only
+    // coherent as a pair: validating them separately would see a dangling
+    // default on either side.
+    const currentDefault = currentField.defaultValue();
+    const nextDefault = this.defaultValueValue !== undefined ? this.defaultValueValue : undefined;
+    const clearsDefault = this.defaultValueValue === undefined && this.shouldClearDefaultValue;
+    const defaultChanged =
+      (nextDefault !== undefined && (!currentDefault || !nextDefault.equals(currentDefault))) ||
+      (clearsDefault && currentDefault !== undefined);
+    const defaultValueChange = defaultChanged
+      ? { next: clearsDefault ? undefined : nextDefault }
+      : undefined;
+
     if (this.optionsValue !== undefined) {
       const currentOptions = currentField.selectOptions();
       specs.push(
@@ -2081,29 +2071,20 @@ class UpdateSingleSelectFieldSpec implements IUpdateTableFieldSpec {
           dbFieldName,
           currentOptions,
           this.optionsValue,
-          this.domainContextValue
+          this.domainContextValue,
+          defaultValueChange
         )
       );
     }
 
-    if (this.defaultValueValue !== undefined) {
-      const currentDefault = currentField.defaultValue();
-      if (!currentDefault || !this.defaultValueValue.equals(currentDefault)) {
-        specs.push(
-          UpdateSingleSelectDefaultValueSpec.create(
-            currentField.id(),
-            currentDefault,
-            this.defaultValueValue
-          )
-        );
-      }
-    } else if (this.shouldClearDefaultValue) {
-      const currentDefault = currentField.defaultValue();
-      if (currentDefault !== undefined) {
-        specs.push(
-          UpdateSingleSelectDefaultValueSpec.create(currentField.id(), currentDefault, undefined)
-        );
-      }
+    if (this.optionsValue === undefined && defaultChanged) {
+      specs.push(
+        UpdateSingleSelectDefaultValueSpec.create(
+          currentField.id(),
+          currentDefault,
+          clearsDefault ? undefined : nextDefault
+        )
+      );
     }
 
     if (this.preventAutoNewOptionsValue !== undefined) {
@@ -2224,6 +2205,18 @@ class UpdateMultipleSelectFieldSpec implements IUpdateTableFieldSpec {
       );
     }
 
+    // See UpdateSingleSelectFieldSpec: resolve the default change once so an
+    // option rewrite and a default re-point agree on it.
+    const currentDefault = currentField.defaultValue();
+    const nextDefault = this.defaultValueValue !== undefined ? this.defaultValueValue : undefined;
+    const clearsDefault = this.defaultValueValue === undefined && this.shouldClearDefaultValue;
+    const defaultChanged =
+      (nextDefault !== undefined && (!currentDefault || !nextDefault.equals(currentDefault))) ||
+      (clearsDefault && currentDefault !== undefined);
+    const defaultValueChange = defaultChanged
+      ? { next: clearsDefault ? undefined : nextDefault }
+      : undefined;
+
     if (this.optionsValue !== undefined) {
       const currentOptions = currentField.selectOptions();
       specs.push(
@@ -2232,29 +2225,20 @@ class UpdateMultipleSelectFieldSpec implements IUpdateTableFieldSpec {
           dbFieldName,
           currentOptions,
           this.optionsValue,
-          this.domainContextValue
+          this.domainContextValue,
+          defaultValueChange
         )
       );
     }
 
-    if (this.defaultValueValue !== undefined) {
-      const currentDefault = currentField.defaultValue();
-      if (!currentDefault || !this.defaultValueValue.equals(currentDefault)) {
-        specs.push(
-          UpdateMultipleSelectDefaultValueSpec.create(
-            currentField.id(),
-            currentDefault,
-            this.defaultValueValue
-          )
-        );
-      }
-    } else if (this.shouldClearDefaultValue) {
-      const currentDefault = currentField.defaultValue();
-      if (currentDefault !== undefined) {
-        specs.push(
-          UpdateMultipleSelectDefaultValueSpec.create(currentField.id(), currentDefault, undefined)
-        );
-      }
+    if (this.optionsValue === undefined && defaultChanged) {
+      specs.push(
+        UpdateMultipleSelectDefaultValueSpec.create(
+          currentField.id(),
+          currentDefault,
+          clearsDefault ? undefined : nextDefault
+        )
+      );
     }
 
     if (this.preventAutoNewOptionsValue !== undefined) {
@@ -3320,7 +3304,7 @@ class UpdateButtonFieldSpec implements IUpdateTableFieldSpec {
     private readonly nameValue: FieldName | undefined,
     private readonly labelValue: ButtonLabel | undefined,
     private readonly colorValue: FieldColor | undefined,
-    private readonly maxCountValue: ButtonMaxCount | undefined,
+    private readonly maxCountClearable: ClearableResult<ButtonMaxCount | undefined>,
     private readonly resetCountValue: ButtonResetCount | undefined,
     private readonly workflowClearable: ClearableResult<ButtonWorkflow | undefined>,
     private readonly confirmClearable: ClearableResult<ButtonConfirm | undefined>,
@@ -3351,18 +3335,30 @@ class UpdateButtonFieldSpec implements IUpdateTableFieldSpec {
       typeof input.options === 'object' &&
       Object.hasOwn(input.options, 'confirm');
 
+    // The click limit is optional and the button is unlimited without it, so
+    // `null` has to clear it. Parsing it as a plain optional made the limit
+    // impossible to remove, unlike `workflow`/`confirm` next to it.
+    const maxCountWasProvided =
+      input.options != null &&
+      typeof input.options === 'object' &&
+      Object.hasOwn(input.options, 'maxCount');
+
     return optional(input.name, FieldName.create).andThen((name) =>
       optional(input.options?.label, ButtonLabel.create).andThen((label) =>
         optional(input.options?.color, FieldColor.create).andThen((color) =>
-          optional(input.options?.maxCount, ButtonMaxCount.create).andThen((maxCount) =>
-            optional(input.options?.resetCount, ButtonResetCount.create).andThen((resetCount) =>
-              clearable(
-                input.options?.workflow,
-                workflowWasProvided,
-                ButtonWorkflow.create
-              ).andThen((workflowResult) =>
-                clearable(input.options?.confirm, confirmWasProvided, ButtonConfirm.create).andThen(
-                  (confirmResult) =>
+          clearable(input.options?.maxCount, maxCountWasProvided, ButtonMaxCount.create).andThen(
+            (maxCountResult) =>
+              optional(input.options?.resetCount, ButtonResetCount.create).andThen((resetCount) =>
+                clearable(
+                  input.options?.workflow,
+                  workflowWasProvided,
+                  ButtonWorkflow.create
+                ).andThen((workflowResult) =>
+                  clearable(
+                    input.options?.confirm,
+                    confirmWasProvided,
+                    ButtonConfirm.create
+                  ).andThen((confirmResult) =>
                     optional(input.notNull, FieldNotNull.create).andThen((notNull) =>
                       optional(input.unique, FieldUnique.create).map(
                         (unique) =>
@@ -3370,7 +3366,7 @@ class UpdateButtonFieldSpec implements IUpdateTableFieldSpec {
                             name,
                             label,
                             color,
-                            maxCount,
+                            maxCountResult,
                             resetCount,
                             workflowResult,
                             confirmResult,
@@ -3379,9 +3375,9 @@ class UpdateButtonFieldSpec implements IUpdateTableFieldSpec {
                           )
                       )
                     )
+                  )
                 )
               )
-            )
           )
         )
       )
@@ -3417,13 +3413,15 @@ class UpdateButtonFieldSpec implements IUpdateTableFieldSpec {
       }
     }
 
-    if (this.maxCountValue !== undefined) {
-      const currentMaxCount = currentField.maxCount();
-      if (!currentMaxCount || !this.maxCountValue.equals(currentMaxCount)) {
-        specs.push(
-          UpdateButtonMaxCountSpec.create(currentField.id(), currentMaxCount, this.maxCountValue)
-        );
-      }
+    const currentMaxCount = currentField.maxCount();
+    const nextMaxCount = this.maxCountClearable.shouldClear
+      ? undefined
+      : this.maxCountClearable.value;
+    const maxCountChanged = this.maxCountClearable.shouldClear
+      ? currentMaxCount !== undefined
+      : nextMaxCount !== undefined && (!currentMaxCount || !nextMaxCount.equals(currentMaxCount));
+    if (maxCountChanged) {
+      specs.push(UpdateButtonMaxCountSpec.create(currentField.id(), currentMaxCount, nextMaxCount));
     }
 
     if (this.resetCountValue !== undefined) {

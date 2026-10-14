@@ -344,7 +344,7 @@ export const convertFieldRoSchema = baseFieldRoSchema
     options: baseFieldRoSchema.shape.options.nullable().optional(),
   })
   .superRefine(refineOptions);
-export const createFieldRoSchema = baseFieldRoSchema
+const createFieldRoInputSchema = baseFieldRoSchema
   .extend({
     id: z.string().startsWith(IdPrefix.Field).optional().meta({
       description:
@@ -366,10 +366,30 @@ export const createFieldRoSchema = baseFieldRoSchema
   })
   .superRefine(refineOptions);
 
+export const createFieldRoSchema = z.preprocess((input) => {
+  if (
+    !input ||
+    typeof input !== 'object' ||
+    !('type' in input) ||
+    input.type !== FieldType.ConditionalRollup ||
+    !('options' in input) ||
+    !input.options ||
+    typeof input.options !== 'object' ||
+    Array.isArray(input.options)
+  ) {
+    return input;
+  }
+  if ('expression' in input.options && input.options.expression !== undefined) {
+    return input;
+  }
+  return { ...input, options: { ...input.options, expression: 'countall({values})' } };
+}, createFieldRoInputSchema);
+
 export const updateFieldRoSchema = z.object({
   name: baseFieldRoSchema.shape.name,
   description: baseFieldRoSchema.shape.description,
   dbFieldName: baseFieldRoSchema.shape.dbFieldName,
+  options: formulaFieldOptionsSchema.partial().optional(),
 });
 
 export type IFieldRo = z.infer<typeof createFieldRoSchema>;

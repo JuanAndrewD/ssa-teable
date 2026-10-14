@@ -1120,14 +1120,6 @@
     "collapseAllGroups": "Tüm grupları daralt",
     "addToChat": "Sohbete ekle"
   },
-  "connection": {
-    "title": "Veritabanı Bağlantısı",
-    "description": "Veritabanına doğrudan veritabanı bağlantısı üzerinden erişebilirsiniz; mevcut projedeki tüm tablolar buna dahildir.",
-    "noPermission": "Veritabanına erişim izniniz yok",
-    "connectionCountTip": "Maksimum veritabanı bağlantısı sayısı <b>{{max}}</b> ve mevcut bağlantı sayısı <b>{{current}}</b>",
-    "createFailed": "Please ensure that the PUBLIC_DATABASE_PROXY environment variable is set correctly",
-    "readonlyUnavailable": "Readonly database sharing is unavailable for this data database. Grant the Teable database user permission to create roles and grants, or use a target database that supports readonly roles."
-  },
   "view": {
     "addRecord": "Kayıt ekle",
     "searchView": "Görünüm ara...",
@@ -1482,6 +1474,8 @@
       "submit": "Gönder"
     },
     "newChat": "Yeni sohbet",
+    "alreadyInNewChat": "Zaten yeni bir sohbettesiniz",
+    "initChatFailed": "Sohbet başlatılamadı",
     "clearChat": "Sohbeti temizle",
     "expand": "Genişlet",
     "history": "Geçmiş",
@@ -1517,8 +1511,11 @@
     "noFoundHistory": "Sohbet geçmişi bulunamadı, lütfen yeni bir konuşma başlatın",
     "pin": "Sabitle",
     "unpin": "Sabitlemeyi kaldır",
+    "markRead": "Okundu olarak işaretle",
+    "markUnread": "Okunmadı olarak işaretle",
+    "markAllRead": "Tümünü okundu olarak işaretle ({{count}})",
     "archive": "Arşivle",
-    "archivedToast": "Sohbet arşivlendi. Ayarlar › Arşivlenen sohbetler altında bulabilirsiniz.",
+    "archivedToast": "Sohbet arşivlendi",
     "unread": "Okunmadı",
     "timeGroup": {
       "pinned": "Sabitlenenler",
@@ -1669,7 +1666,6 @@
       "pausedHidden": "Yeniden deneme duraklatıldı — yeniden bağlanmak için bu sekmeyi açın.",
       "maxAttemptsReached": "Otomatik olarak yeniden bağlanılamadı. Lütfen sayfayı elle yenileyin."
     },
-    "initChatFailed": "Sohbet başlatılamadı",
     "app": {
       "loadingChatHistory": "Sohbet geçmişi yükleniyor...",
       "generatorTitle": "Yapay Zekâ Uygulama Oluşturucu",

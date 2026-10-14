@@ -424,7 +424,6 @@
       "baseInviteEmail": "الدعوة عبر البريد الإلكتروني في المشروع",
       "baseInviteLink": "الدعوة عبر رابط في المشروع",
       "baseAuthorityMatrixConfig": "إعداد مصفوفة الصلاحيات",
-      "baseDbConnect": "الاتصال بقاعدة البيانات",
       "tableCreate": "إنشاء جدول",
       "tableRead": "قراءة الجدول",
       "tableDelete": "حذف الجدول",
@@ -1121,15 +1120,11 @@
       "listMailboxesFailed": "فشل سرد صناديق البريد: {{detail}}"
     },
     "scrape": {
-      "unknownDataset": "مجموعة بيانات غير معروفة: {{datasetId}}",
       "apiKeyNotConfigured": "لم يتم إعداد خدمة استخراج البيانات",
       "triggerFailed": "فشل تشغيل الاستخراج: {{detail}}",
-      "snapshotError": "خطأ في لقطة الاستخراج: {{detail}}",
-      "timeout": "انتهت مهلة الاستخراج بعد {{seconds}} ثانية",
       "catalogFailed": "فشل طلب فهرس الاستخراج: {{detail}}",
-      "discoverByOnCatalogDataset": "discoverBy ينطبق فقط على معرّفات مجموعات البيانات الخام، وليس على {{datasetId}}",
-      "tooManyRecords": "ستعيد عملية الاستخراج ما يصل إلى {{estimated}} سجل، وهو ما يتجاوز الحد المسموح به وهو {{max}} لكل تشغيل",
-      "creditEstimateExceeded": "الأرصدة المقدّرة لعملية الاستخراج هذه تتجاوز المتاح حاليًا"
+      "creditEstimateExceeded": "الأرصدة المقدّرة لعملية الاستخراج هذه تتجاوز المتاح حاليًا",
+      "runOverLimit": "قد تصل تكلفة عملية الاستخراج هذه إلى {{maxCredits}} من الأرصدة، وهذا يتجاوز الحد البالغ {{limit}} من الأرصدة لعملية التشغيل الواحدة."
     },
     "integration": {
       "oauthCodeExchangeFailed": "فشل تبادل رمز OAuth: {{detail}}",
@@ -1192,6 +1187,7 @@
     "chat": {
       "notFound": "المحادثة غير موجودة",
       "accessDenied": "غير مسموح لك بالوصول إلى هذه المحادثة",
+      "archived": "المحادثة مؤرشفة",
       "serverAuthoredType": "المحادثات من النوع {{type}} ينشئها الخادم"
     },
     "dashboard": {
@@ -1247,12 +1243,6 @@
     },
     "pluginChart": {
       "queryNotFound": "استعلام مخطط المكوّن الإضافي غير موجود"
-    },
-    "dbConnection": {
-      "unsupportedDriver": "مشغّل قاعدة بيانات غير مدعوم: {{driver}}",
-      "onlyOwnerCanRemove": "لا يمكن إلا لمالك المشروع إزالة اتصال قاعدة البيانات لـ {{baseId}}",
-      "onlyOwnerCanCreate": "لا يمكن إلا لمالك المشروع إنشاء اتصال قاعدة البيانات لـ {{baseId}}",
-      "roleNotExist": "دور قاعدة البيانات {{role}} غير موجود"
     },
     "baseQuery": {
       "queryFailed": "فشل الاستعلام: {{message}}",
@@ -1328,6 +1318,7 @@
       "lookupAndLinkLengthMatch": "يجب أن يتطابق طول lookupValues مع طول linkCellValues",
       "cycleDetected": "تم اكتشاف دورة",
       "cycleDetectedCreateField": "تم اكتشاف دورة، ولا يمكن إنشاء الحقل {{name}}[{{id}}]",
+      "cycleDetectedCreateFieldGeneric": "تم اكتشاف دورة، ولا يمكن إنشاء الحقل",
       "recordMapNotFound": "لم يتم العثور على السجل في الجدول {{tableName}} للحقل {{fieldName}}",
       "forbidDeletePrimaryField": "يُمنع حذف الحقل الأساسي",
       "foreignTableIdInvalid": "الجدول الخارجي {{foreignTableId}} غير صالح",

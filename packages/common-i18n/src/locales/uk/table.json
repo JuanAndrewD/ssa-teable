@@ -1130,14 +1130,6 @@
     "collapseAllGroups": "Згорнути всі групи",
     "addToChat": "Додати до чату"
   },
-  "connection": {
-    "title": "Підключення до бази даних",
-    "description": "Ви можете отримати прямий доступ до бази даних через підключення до бази даних, включаючи всі таблиці в поточному проєкті",
-    "noPermission": "У вас немає дозволів на доступ до бази даних",
-    "connectionCountTip": "Максимальна кількість підключень до бази даних - <b>{{max}}</b>, поточна кількість підключень - <b>{{current}}</b>",
-    "createFailed": "Пожалуйста, переконайтеся, що змінне середовище PUBLIC_DATABASE_PROXY встановлено правильно",
-    "readonlyUnavailable": "Readonly database sharing is unavailable for this data database. Grant the Teable database user permission to create roles and grants, or use a target database that supports readonly roles."
-  },
   "view": {
     "addRecord": "Додати запис",
     "searchView": "Поиск вида...",
@@ -1519,6 +1511,8 @@
       "submit": "Надіслати"
     },
     "newChat": "Новий чат",
+    "alreadyInNewChat": "Ви вже в новому чаті",
+    "initChatFailed": "Не вдалося ініціалізувати чат",
     "clearChat": "Очистити чат",
     "expand": "Розгорнути",
     "history": "Історія",
@@ -1556,8 +1550,11 @@
     "noFoundHistory": "Немає історії чату, будь ласка, почати нову розмову",
     "pin": "Закріпити",
     "unpin": "Відкріпити",
+    "markRead": "Позначити як прочитане",
+    "markUnread": "Позначити як непрочитане",
+    "markAllRead": "Позначити всі як прочитані ({{count}})",
     "archive": "В архів",
-    "archivedToast": "Чат перенесено в архів. Знайти його можна в «Налаштування › Архів чатів».",
+    "archivedToast": "Чат перенесено в архів",
     "unread": "Непрочитано",
     "timeGroup": {
       "pinned": "Закріплені",
@@ -1712,7 +1709,6 @@
       "pausedHidden": "Повтор призупинено — відкрийте цю вкладку, щоб перепідключитися.",
       "maxAttemptsReached": "Не вдалося перепідключитися автоматично. Оновіть сторінку вручну."
     },
-    "initChatFailed": "Не вдалося ініціалізувати чат",
     "app": {
       "loadingChatHistory": "Завантаження історії чату...",
       "generatorTitle": "ШІ-генератор застосунків",

@@ -140,6 +140,7 @@ describe('FieldValueChangeCollectorVisitor coverage', () => {
     const confirmFieldId = mkFieldId('confirmOnly');
     const formulaFieldId = mkFieldId('formulaTz');
     const rollupFieldId = mkFieldId('rollupTz');
+    const clearErrorFieldId = mkFieldId('clearError');
     const previousWorkflow = ButtonWorkflow.create({
       id: 'wflPreviousWorkflow',
       name: 'Previous',
@@ -159,7 +160,7 @@ describe('FieldValueChangeCollectorVisitor coverage', () => {
     } as never);
     visitor.visitTableUpdateFieldHasError({
       isSettingError: () => false,
-      fieldId: () => mkFieldId('clearError'),
+      fieldId: () => clearErrorFieldId,
       previousHasError: () => FieldHasError.error(),
       nextHasError: () => FieldHasError.ok(),
     } as never);
@@ -187,6 +188,7 @@ describe('FieldValueChangeCollectorVisitor coverage', () => {
       workflowFieldId.toString(),
     ]);
     expect(visitor.selfBackfillFields().map((fieldId) => fieldId.toString())).toEqual([
+      clearErrorFieldId.toString(),
       formulaFieldId.toString(),
       rollupFieldId.toString(),
     ]);

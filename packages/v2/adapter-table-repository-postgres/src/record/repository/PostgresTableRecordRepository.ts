@@ -35,6 +35,7 @@ import {
   toQualifiedIdentifierLiteral,
 } from '../../shared/sqlIdentifiers';
 import type { UndoLogRow } from '../../shared/undoCapture';
+import { isUserCellField, normalizeStoredUserAvatarUrls } from '../../shared/userAvatarUrl';
 import type {
   ComputedBeforeImageRecord,
   ComputedFieldUpdater,
@@ -100,6 +101,7 @@ type ChangedFieldColumn = {
   fieldId: core.FieldId;
   dbFieldName: string;
   alias: string;
+  isUserValue: boolean;
 };
 
 type BeforeImageCapturePlan = {
@@ -891,6 +893,7 @@ const toChangedFieldColumns = (
         fieldId,
         dbFieldName: yield* dbFieldName.value(),
         alias: `changed_${index}`,
+        isUserValue: isUserCellField(field),
       });
     }
     return ok(changedColumns);
@@ -909,14 +912,49 @@ const toChangedFieldsMap = (
   }
 
   const changedFields = new Map<string, unknown>();
-  for (const { fieldId, alias } of columns) {
+  for (const { fieldId, alias, isUserValue } of columns) {
     const fieldIdStr = fieldId.toString();
     if (allowedFieldIds && !allowedFieldIds.has(fieldIdStr)) {
       continue;
     }
-    changedFields.set(fieldIdStr, row[alias]);
+    const value = row[alias];
+    changedFields.set(fieldIdStr, isUserValue ? normalizeStoredUserAvatarUrls(value) : value);
   }
   return changedFields.size > 0 ? changedFields : undefined;
+};
+
+const presentUpdatedUserValues = (
+  table: core.Table,
+  records: core.UpdateManyResult['updatedRecords']
+): void => {
+  const userFieldIds = table
+    .getFields()
+    .filter(isUserCellField)
+    .map((field) => field.id().toString());
+  for (const record of records) {
+    let oldValues: Record<string, unknown> | undefined;
+    let changedFields: Map<string, unknown> | undefined;
+    for (const fieldId of userFieldIds) {
+      if (Object.hasOwn(record.oldFieldValues, fieldId)) {
+        const value = record.oldFieldValues[fieldId];
+        const displayed = normalizeStoredUserAvatarUrls(value);
+        if (displayed !== value) {
+          oldValues ??= { ...record.oldFieldValues };
+          oldValues[fieldId] = displayed;
+        }
+      }
+      if (record.changedFields?.has(fieldId)) {
+        const value = record.changedFields.get(fieldId);
+        const displayed = normalizeStoredUserAvatarUrls(value);
+        if (displayed !== value) {
+          changedFields ??= new Map(record.changedFields);
+          changedFields.set(fieldId, displayed);
+        }
+      }
+    }
+    if (oldValues) record.oldFieldValues = oldValues;
+    if (changedFields) record.changedFields = changedFields;
+  }
 };
 
 const buildBeforeImageFromTrackedValues = (
@@ -2581,6 +2619,8 @@ export class PostgresTableRecordRepository implements core.ITableRecordRepositor
             await this.touchTableMeta(context, table.id().toString(), actorId);
           }
 
+          // Keep raw before-images for computation, then expose matching old/new presentation.
+          presentUpdatedUserValues(table, updatedRecords);
           return ok({
             totalUpdated: updatedRecordIds.length,
             updatedRecordIds,
@@ -3010,6 +3050,7 @@ export class PostgresTableRecordRepository implements core.ITableRecordRepositor
           await this.touchTableMeta(context, table.id().toString(), actorId);
         }
 
+        presentUpdatedUserValues(table, updatedRecords);
         return ok({ totalUpdated, updatedRecords });
       }.bind(this)
     );

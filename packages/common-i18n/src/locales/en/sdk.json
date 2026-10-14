@@ -406,7 +406,6 @@
       "baseInviteEmail": "Invite via email in project",
       "baseInviteLink": "Invite via link in project",
       "baseAuthorityMatrixConfig": "Configure authority matrix",
-      "baseDbConnect": "Connect to database",
       "tableCreate": "Create table",
       "tableRead": "Read table",
       "tableDelete": "Delete table",
@@ -655,8 +654,8 @@
       "example": "BLANK() => null\nIF(2 > 3, \"Yes\", BLANK()) => null"
     },
     "ERROR": {
-      "summary": "Returns the error value.",
-      "example": "IF(2 > 3, \"Yes\", ERROR(\"Calculation\")) => \"#ERROR: Calculation\""
+      "summary": "Returns a custom error. Text formula cells display #ERROR: followed by the message; IS_ERROR returns true.",
+      "example": "ERROR(\"custom error\") => \"#ERROR: custom error\"\nIF(2 > 3, \"Yes\", ERROR(\"Calculation\")) => \"#ERROR: Calculation\""
     },
     "IS_ERROR": {
       "summary": "Returns true if the expression causes an error.",
@@ -1107,15 +1106,11 @@
       "listMailboxesFailed": "Failed to list mailboxes: {{detail}}"
     },
     "scrape": {
-      "unknownDataset": "Unknown dataset: {{datasetId}}",
       "apiKeyNotConfigured": "Scrape service is not configured",
       "triggerFailed": "Scrape trigger failed: {{detail}}",
-      "snapshotError": "Scrape snapshot error: {{detail}}",
-      "timeout": "Scrape timed out after {{seconds}}s",
       "catalogFailed": "Scrape catalog request failed: {{detail}}",
-      "discoverByOnCatalogDataset": "discoverBy applies only to raw dataset ids, not to {{datasetId}}",
-      "tooManyRecords": "Scrape would return up to {{estimated}} records, over the {{max}} allowed per trigger",
-      "creditEstimateExceeded": "This scrape's estimated credits exceed what is available right now"
+      "creditEstimateExceeded": "This scrape's estimated credits exceed what is available right now",
+      "runOverLimit": "This scrape can cost up to {{maxCredits}} credits, over the {{limit}} allowed for one run."
     },
     "integration": {
       "oauthCodeExchangeFailed": "Failed to exchange OAuth code: {{detail}}",
@@ -1178,6 +1173,7 @@
     "chat": {
       "notFound": "Chat not found",
       "accessDenied": "You are not allowed to access this chat",
+      "archived": "Chat is archived",
       "serverAuthoredType": "Chats of type {{type}} are created by the server"
     },
     "dashboard": {
@@ -1233,12 +1229,6 @@
     },
     "pluginChart": {
       "queryNotFound": "Plugin chart query not found"
-    },
-    "dbConnection": {
-      "unsupportedDriver": "Unsupported database driver: {{driver}}",
-      "onlyOwnerCanRemove": "Only the project owner can remove database connection for project {{baseId}}",
-      "onlyOwnerCanCreate": "Only the project owner can create database connection for project {{baseId}}",
-      "roleNotExist": "Database role {{role}} does not exist"
     },
     "baseQuery": {
       "queryFailed": "Query failed: {{message}}",
@@ -1314,6 +1304,7 @@
       "lookupAndLinkLengthMatch": "lookupValues length should be same as linkCellValues length",
       "cycleDetected": "Cycle detected",
       "cycleDetectedCreateField": "Cycle detected, cannot create field {{name}}[{{id}}]",
+      "cycleDetectedCreateFieldGeneric": "Cycle detected, cannot create field",
       "recordMapNotFound": "Record not found in table {{tableName}} for field {{fieldName}}",
       "forbidDeletePrimaryField": "Forbid delete primary field",
       "foreignTableIdInvalid": "Foreign table {{foreignTableId}} invalid",

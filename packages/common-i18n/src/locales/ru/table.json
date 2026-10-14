@@ -1130,14 +1130,6 @@
     "collapseAllGroups": "Свернуть все группы",
     "addToChat": "Добавить в чат"
   },
-  "connection": {
-    "title": "Подключение к базе данных",
-    "description": "Вы можете получить прямой доступ к базе данных через подключение к базе данных, включая все таблицы в текущем проекте",
-    "noPermission": "У вас нет разрешения на доступ к базе данных",
-    "connectionCountTip": "Максимальное количество подключений к базе данных - <b>{{max}}</b>, текущее количество подключений - <b>{{current}}</b>",
-    "createFailed": "Пожалуйста, убедитесь, что переменная окружения PUBLIC_DATABASE_PROXY установлена правильно",
-    "readonlyUnavailable": "Readonly database sharing is unavailable for this data database. Grant the Teable database user permission to create roles and grants, or use a target database that supports readonly roles."
-  },
   "view": {
     "addRecord": "Добавить запись",
     "searchView": "Поиск вида...",
@@ -1519,6 +1511,8 @@
       "submit": "Отправить"
     },
     "newChat": "Новый чат",
+    "alreadyInNewChat": "Вы уже в новом чате",
+    "initChatFailed": "Не удалось инициализировать чат",
     "clearChat": "Очистить чат",
     "expand": "Развернуть",
     "history": "История",
@@ -1556,8 +1550,11 @@
     "noFoundHistory": "Нет истории чата, пожалуйста, начните новую беседу",
     "pin": "Закрепить",
     "unpin": "Открепить",
+    "markRead": "Отметить как прочитанное",
+    "markUnread": "Отметить как непрочитанное",
+    "markAllRead": "Отметить все как прочитанные ({{count}})",
     "archive": "В архив",
-    "archivedToast": "Чат перенесён в архив. Найти его можно в «Настройки › Архив чатов».",
+    "archivedToast": "Чат перенесён в архив",
     "unread": "Непрочитано",
     "timeGroup": {
       "pinned": "Закреплённые",
@@ -1712,7 +1709,6 @@
       "pausedHidden": "Повтор приостановлен — откройте эту вкладку для переподключения.",
       "maxAttemptsReached": "Не удалось переподключиться автоматически. Обновите страницу вручную."
     },
-    "initChatFailed": "Не удалось инициализировать чат",
     "app": {
       "loadingChatHistory": "Загрузка истории чата...",
       "generatorTitle": "ИИ-генератор приложений",

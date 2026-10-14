@@ -228,6 +228,7 @@ export type I18nTranslations = {
             "delete": string;
             "clear": string;
             "cancel": string;
+            "undo": string;
             "zoomIn": string;
             "zoomOut": string;
             "back": string;
@@ -792,7 +793,6 @@ export type I18nTranslations = {
             "overLimitsDescription": string;
             "userLimitExceededDescription": string;
             "unavailableInPlanTips": string;
-            "unavailableConnectionTips": string;
             "levelTips": string;
             "enterpriseFeature": string;
             "automationRequiresUpgrade": string;
@@ -1829,6 +1829,10 @@ export type I18nTranslations = {
         };
         "chat": {
             "serverError": string;
+            "chatGone": string;
+            "chatGoneDescription": string;
+            "chatArchived": string;
+            "chatArchivedDescription": string;
             "modelNotSupported": string;
             "byokModelNotSupported": string;
             "modelServiceUnavailable": string;
@@ -2065,6 +2069,14 @@ export type I18nTranslations = {
                 "summaryTitle": string;
                 "summary": string;
             };
+        };
+        "cookieConsent": {
+            "title": string;
+            "body": string;
+            "accept": string;
+            "reject": string;
+            "policy": string;
+            "settings": string;
         };
     };
     "dashboard": {
@@ -2705,7 +2717,6 @@ export type I18nTranslations = {
                 "baseInviteEmail": string;
                 "baseInviteLink": string;
                 "baseAuthorityMatrixConfig": string;
-                "baseDbConnect": string;
                 "tableCreate": string;
                 "tableRead": string;
                 "tableDelete": string;
@@ -3402,15 +3413,11 @@ export type I18nTranslations = {
                 "listMailboxesFailed": string;
             };
             "scrape": {
-                "unknownDataset": string;
                 "apiKeyNotConfigured": string;
                 "triggerFailed": string;
-                "snapshotError": string;
-                "timeout": string;
                 "catalogFailed": string;
-                "discoverByOnCatalogDataset": string;
-                "tooManyRecords": string;
                 "creditEstimateExceeded": string;
+                "runOverLimit": string;
             };
             "integration": {
                 "oauthCodeExchangeFailed": string;
@@ -3473,6 +3480,7 @@ export type I18nTranslations = {
             "chat": {
                 "notFound": string;
                 "accessDenied": string;
+                "archived": string;
                 "serverAuthoredType": string;
             };
             "dashboard": {
@@ -3528,12 +3536,6 @@ export type I18nTranslations = {
             };
             "pluginChart": {
                 "queryNotFound": string;
-            };
-            "dbConnection": {
-                "unsupportedDriver": string;
-                "onlyOwnerCanRemove": string;
-                "onlyOwnerCanCreate": string;
-                "roleNotExist": string;
             };
             "baseQuery": {
                 "queryFailed": string;
@@ -3609,6 +3611,7 @@ export type I18nTranslations = {
                 "lookupAndLinkLengthMatch": string;
                 "cycleDetected": string;
                 "cycleDetectedCreateField": string;
+                "cycleDetectedCreateFieldGeneric": string;
                 "recordMapNotFound": string;
                 "forbidDeletePrimaryField": string;
                 "foreignTableIdInvalid": string;
@@ -5562,14 +5565,6 @@ export type I18nTranslations = {
             "collapseAllGroups": string;
             "addToChat": string;
         };
-        "connection": {
-            "title": string;
-            "description": string;
-            "noPermission": string;
-            "connectionCountTip": string;
-            "createFailed": string;
-            "readonlyUnavailable": string;
-        };
         "view": {
             "addRecord": string;
             "searchView": string;
@@ -5977,6 +5972,8 @@ export type I18nTranslations = {
                 "submit": string;
             };
             "newChat": string;
+            "alreadyInNewChat": string;
+            "initChatFailed": string;
             "clearChat": string;
             "expand": string;
             "history": string;
@@ -6016,6 +6013,9 @@ export type I18nTranslations = {
             "noFoundHistory": string;
             "pin": string;
             "unpin": string;
+            "markRead": string;
+            "markUnread": string;
+            "markAllRead": string;
             "archive": string;
             "archivedToast": string;
             "unread": string;
@@ -6147,7 +6147,6 @@ export type I18nTranslations = {
                 "pausedHidden": string;
                 "maxAttemptsReached": string;
             };
-            "initChatFailed": string;
             "app": {
                 "loadingChatHistory": string;
                 "generatorTitle": string;

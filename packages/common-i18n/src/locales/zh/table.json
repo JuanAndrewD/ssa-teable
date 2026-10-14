@@ -1125,14 +1125,6 @@
     "collapseAllGroups": "收起所有分组",
     "addToChat": "添加到对话"
   },
-  "connection": {
-    "title": "数据库连接",
-    "description": "你可以通过数据库连接来直接访问数据库",
-    "noPermission": "你没有权限访问数据库连接",
-    "connectionCountTip": "最大数据库连接数为 <b>{{max}}</b> 当前已建立的连接数为 <b>{{current}}</b>",
-    "createFailed": "请确保环境变量 PUBLIC_DATABASE_PROXY 设置正确",
-    "readonlyUnavailable": "当前数据数据库不支持创建只读分享连接。请为 Teable 数据库用户授予创建角色和授权的权限，或更换支持只读角色的数据库。"
-  },
   "view": {
     "addRecord": "添加记录",
     "searchView": "搜索视图...",
@@ -1469,6 +1461,8 @@
       "submit": "提交"
     },
     "newChat": "新对话",
+    "alreadyInNewChat": "已经在新对话中",
+    "initChatFailed": "初始化对话失败",
     "clearChat": "清除对话",
     "expand": "展开",
     "history": "历史记录",
@@ -1503,8 +1497,11 @@
     "noFoundHistory": "没有找到匹配的聊天记录，请开始新的对话",
     "pin": "置顶",
     "unpin": "取消置顶",
+    "markRead": "标为已读",
+    "markUnread": "标为未读",
+    "markAllRead": "全部标为已读（{{count}}）",
     "archive": "归档",
-    "archivedToast": "对话已归档，可在「设置 › 已归档对话」中查看。",
+    "archivedToast": "对话已归档",
     "unread": "未读",
     "timeGroup": {
       "pinned": "置顶",
@@ -1623,7 +1620,6 @@
       "pausedHidden": "已暂停重试，请切回此标签页以重新连接。",
       "maxAttemptsReached": "自动重试未成功，请手动刷新页面。"
     },
-    "initChatFailed": "初始化对话失败",
     "app": {
       "loadingChatHistory": "加载对话历史...",
       "generatorTitle": "AI 应用生成器",

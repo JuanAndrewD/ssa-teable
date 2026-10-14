@@ -1120,14 +1120,6 @@
     "collapseAllGroups": "Alle Gruppen einklappen",
     "addToChat": "Zum Chat hinzufügen"
   },
-  "connection": {
-    "title": "Datenbankverbindung",
-    "description": "Sie können über die Datenbankverbindung direkt auf die Datenbank zugreifen, einschließlich aller Tabellen im aktuellen Projekt",
-    "noPermission": "Sie haben keine Berechtigung zum Zugriff auf die Datenbank",
-    "connectionCountTip": "Die maximale Anzahl von Datenbankverbindungen beträgt <b>{{max}}</b> und die aktuellen Verbindungen sind <b>{{current}}</b>",
-    "createFailed": "Bitte stellen Sie sicher, dass die Umgebungsvariable PUBLIC_DATABASE_PROXY korrekt gesetzt ist",
-    "readonlyUnavailable": "Readonly database sharing is unavailable for this data database. Grant the Teable database user permission to create roles and grants, or use a target database that supports readonly roles."
-  },
   "view": {
     "addRecord": "Datensatz hinzufügen",
     "searchView": "Ansicht durchsuchen...",
@@ -1481,6 +1473,8 @@
       "submit": "Abschicken"
     },
     "newChat": "Neue Chat",
+    "alreadyInNewChat": "Du bist bereits in einem neuen Chat",
+    "initChatFailed": "Chat konnte nicht initialisiert werden",
     "clearChat": "Chat leeren",
     "expand": "Erweitern",
     "history": "Verlauf",
@@ -1516,8 +1510,11 @@
     "noFoundHistory": "Keine passenden Chat-Verlauf gefunden, starten Sie einen neuen Chat",
     "pin": "Anheften",
     "unpin": "Loslösen",
+    "markRead": "Als gelesen markieren",
+    "markUnread": "Als ungelesen markieren",
+    "markAllRead": "Alle als gelesen markieren ({{count}})",
     "archive": "Archivieren",
-    "archivedToast": "Chat archiviert. Zu finden unter Einstellungen › Archivierte Chats.",
+    "archivedToast": "Chat archiviert",
     "unread": "Ungelesen",
     "timeGroup": {
       "pinned": "Angeheftet",
@@ -1668,7 +1665,6 @@
       "pausedHidden": "Wiederholung pausiert – öffnen Sie diesen Tab, um die Verbindung wiederherzustellen.",
       "maxAttemptsReached": "Automatische Wiederverbindung fehlgeschlagen. Bitte laden Sie die Seite manuell neu."
     },
-    "initChatFailed": "Chat konnte nicht initialisiert werden",
     "app": {
       "loadingChatHistory": "Chatverlauf wird geladen...",
       "generatorTitle": "KI-App-Generator",

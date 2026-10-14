@@ -15,6 +15,7 @@
     "delete": "Sil",
     "clear": "Temizle",
     "cancel": "İptal",
+    "undo": "Geri al",
     "zoomIn": "Yakınlaştır",
     "zoomOut": "Uzaklaştır",
     "back": "Geri",
@@ -568,7 +569,6 @@
     "overLimitsDescription": "Mevcut aboneliğiniz kullanım sınırını aştı. Bu özelliği kesintisiz kullanmaya devam etmek için lütfen planınızı yükseltin.",
     "userLimitExceededDescription": "Mevcut örnek, lisansınızın izin verdiği maksimum kullanıcı sayısına ulaştı. Lütfen bazı kullanıcıları devre dışı bırakın veya lisansı yükseltin.",
     "unavailableInPlanTips": "Mevcut abonelik planı bu özelliği desteklemiyor",
-    "unavailableConnectionTips": "Veritabanı bağlantısı özelliği gelecekte kaldırılacak ve yalnızca Kurumsal Plan ve kendi sunucu sürümleri için kullanılabilir olacak.",
     "levelTips": "Bu alan şu anda {{level}} planında",
     "enterpriseFeature": "Kurumsal özellik",
     "automationRequiresUpgrade": "Otomasyonu etkinleştirmek için Kurumsal Sürüme (EE) yükseltin",
@@ -1597,6 +1597,10 @@
   },
   "chat": {
     "serverError": "Sunucu hatası oluştu",
+    "chatGone": "Bu sohbet artık yok",
+    "chatGoneDescription": "Başka bir sekmede veya cihazda silindi, bu yüzden buradan artık bir şey gönderilemez.",
+    "chatArchived": "Bu sohbet arşivlenmiş",
+    "chatArchivedDescription": "Arşivlenmiş bir sohbete gönderim yapılamaz.",
     "modelNotSupported": "Seçilen model aracı modunda desteklenmiyor. En iyi deneyim için GPT-6 Astra'ya geçin.",
     "byokModelNotSupported": "Özel modeliniz aracı moduyla uyumlu değil. En iyi deneyim için GPT-6 Astra'ya geçin.",
     "modelServiceUnavailable": "Model hizmeti geçici olarak kullanılamıyor. Lütfen daha sonra tekrar deneyin.",
@@ -1829,5 +1833,13 @@
       "summaryTitle": "Teable",
       "summary": "{{count}} sohbette yeni sonuç var."
     }
+  },
+  "cookieConsent": {
+    "title": "Çerez onayı",
+    "body": "Teable'ın nasıl kullanıldığını anlamak, deneyiminizi iyileştirmek ve pazarlamamızı ölçmek için çerezler ve benzer teknolojiler kullanıyoruz.",
+    "accept": "Tümünü kabul et",
+    "reject": "Tümünü reddet",
+    "policy": "Çerez Politikası",
+    "settings": "Çerez ayarları"
   }
 }

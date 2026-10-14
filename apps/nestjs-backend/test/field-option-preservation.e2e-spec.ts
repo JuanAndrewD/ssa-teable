@@ -8,9 +8,11 @@ import {
   NumberFormattingType,
   RatingIcon,
   Relationship,
+  SingleNumberDisplayType,
   SingleLineTextDisplayType,
   TimeFormatting,
 } from '@teable/core';
+import { PrismaService } from '@teable/db-main-prisma';
 import type { ITableFullVo } from '@teable/openapi';
 import {
   convertField,
@@ -439,6 +441,114 @@ describe('OpenAPI field option preservation (e2e)', () => {
           foreignTableId: foreign.id,
           isOneWay: true,
         });
+      } finally {
+        await permanentDeleteTable(baseId, foreign.id);
+      }
+    });
+  });
+
+  it('drops incompatible inherited ring only for multiple lookups (T7745)', async () => {
+    await withForceV2All(async () => {
+      const formatting = {
+        type: NumberFormattingType.Currency,
+        precision: 1,
+        symbol: '¥',
+      } as const;
+      const showAs = {
+        type: SingleNumberDisplayType.Ring,
+        color: Colors.Blue,
+        showValue: true,
+        maxValue: 100,
+      } as const;
+      const foreign = await createTable(baseId, {
+        name: 'lookup-display-source',
+        fields: [
+          { name: 'Title', type: FieldType.SingleLineText },
+          { name: 'Amount', type: FieldType.Number, options: { formatting, showAs } },
+        ],
+      });
+      try {
+        const amount = foreign.fields.find((field) => field.name === 'Amount');
+        if (!amount) throw new Error('Amount field missing');
+        for (const relationship of [Relationship.ManyOne, Relationship.ManyMany]) {
+          const link = await createField(table.id, {
+            name: `Related ${relationship}`,
+            type: FieldType.Link,
+            options: { relationship, foreignTableId: foreign.id },
+          });
+          const created = await createField(table.id, {
+            name: `Amount ${relationship}`,
+            type: FieldType.Number,
+            isLookup: true,
+            lookupOptions: {
+              foreignTableId: foreign.id,
+              lookupFieldId: amount.id,
+              linkFieldId: link.id,
+            },
+          });
+          const stored = await getField(table.id, created.id);
+          for (const field of [created, stored]) {
+            expect(field.isMultipleCellValue === true).toBe(relationship === Relationship.ManyMany);
+            expect(field.options).toEqual(
+              relationship === Relationship.ManyMany ? { formatting } : { formatting, showAs }
+            );
+          }
+          const persisted = await app.get(PrismaService).field.findUniqueOrThrow({
+            where: { id: created.id },
+            select: { options: true },
+          });
+          expect(JSON.parse(persisted.options ?? 'null')).toEqual(
+            relationship === Relationship.ManyMany ? { formatting } : { formatting, showAs }
+          );
+        }
+        expect((await getField(foreign.id, amount.id)).options).toEqual({ formatting, showAs });
+      } finally {
+        await permanentDeleteTable(baseId, foreign.id);
+      }
+    });
+  });
+
+  it('inherits a compatible source display added after lookup creation (T7745)', async () => {
+    await withForceV2All(async () => {
+      const foreign = await createTable(baseId, {
+        name: 'lookup-late-display-source',
+        fields: [
+          { name: 'Title', type: FieldType.SingleLineText },
+          { name: 'Amount', type: FieldType.Number },
+        ],
+      });
+      try {
+        const amount = foreign.fields.find((field) => field.name === 'Amount');
+        if (!amount) throw new Error('Amount field missing');
+        const link = await createField(table.id, {
+          name: 'Related without display',
+          type: FieldType.Link,
+          options: { relationship: Relationship.ManyOne, foreignTableId: foreign.id },
+        });
+        const lookup = await createField(table.id, {
+          name: 'Amount without display',
+          type: FieldType.Number,
+          isLookup: true,
+          lookupOptions: {
+            foreignTableId: foreign.id,
+            lookupFieldId: amount.id,
+            linkFieldId: link.id,
+          },
+        });
+        expect(lookup.options).not.toHaveProperty('showAs');
+        const showAs = {
+          type: SingleNumberDisplayType.Ring,
+          color: Colors.Blue,
+          showValue: true,
+          maxValue: 100,
+        } as const;
+        await convertField(foreign.id, amount.id, {
+          type: FieldType.Number,
+          options: { ...amount.options, showAs },
+        });
+        const stored = await getField(table.id, lookup.id);
+        expect(stored.isMultipleCellValue).not.toBe(true);
+        expect(stored.options).toMatchObject({ showAs });
       } finally {
         await permanentDeleteTable(baseId, foreign.id);
       }

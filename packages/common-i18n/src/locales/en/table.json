@@ -1130,14 +1130,6 @@
     "collapseAllGroups": "Collapse all groups",
     "addToChat": "Add to Chat"
   },
-  "connection": {
-    "title": "Database connection",
-    "description": "You can access the database directly through the database connection, including all the tables under the current project",
-    "noPermission": "You don't have permission to access the database",
-    "connectionCountTip": "The maximum number of database connections is <b>{{max}}</b> and the current connections is <b>{{current}}</b>",
-    "createFailed": "Please ensure that the PUBLIC_DATABASE_PROXY environment variable is set correctly",
-    "readonlyUnavailable": "Readonly database sharing is unavailable for this data database. Grant the Teable database user permission to create roles and grants, or use a target database that supports readonly roles."
-  },
   "view": {
     "addRecord": "Add record",
     "searchView": "Search view...",
@@ -1488,6 +1480,8 @@
       "submit": "Submit"
     },
     "newChat": "New Chat",
+    "alreadyInNewChat": "You're already in a new chat",
+    "initChatFailed": "Failed to initialize chat",
     "clearChat": "Clear Chat",
     "expand": "Expand",
     "history": "History",
@@ -1523,8 +1517,11 @@
     "noFoundHistory": "No chat history found, please start a new conversation",
     "pin": "Pin",
     "unpin": "Unpin",
+    "markRead": "Mark as read",
+    "markUnread": "Mark as unread",
+    "markAllRead": "Mark all as read ({{count}})",
     "archive": "Archive",
-    "archivedToast": "Chat archived. Find it under Settings › Archived chats.",
+    "archivedToast": "Chat archived",
     "unread": "Unread",
     "timeGroup": {
       "pinned": "Pinned",
@@ -1645,7 +1642,6 @@
       "pausedHidden": "Retry paused — open this tab to reconnect.",
       "maxAttemptsReached": "Couldn't reconnect automatically. Please refresh the page manually."
     },
-    "initChatFailed": "Failed to initialize chat",
     "app": {
       "loadingChatHistory": "Loading chat history...",
       "generatorTitle": "AI App Generator",

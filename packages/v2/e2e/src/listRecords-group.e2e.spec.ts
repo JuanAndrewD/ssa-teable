@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { listTableRecordsOkResponseSchema } from '@teable/v2-contract-http';
 import { createV2HttpClient, type V2HttpClient } from '@teable/v2-contract-http-client';
-import { FieldKeyType } from '@teable/v2-core';
+import { buildUserAvatarUrl, FieldKeyType } from '@teable/v2-core';
 import { sql } from 'kysely';
 import { beforeAll, describe, expect, it } from 'vitest';
 import {
@@ -1090,6 +1090,7 @@ describe('v2 listRecords groupBy (e2e)', () => {
     let nameFieldId: string;
     let dateFieldId: string;
     let ownerLookupFieldId: string;
+    let lookupDbFieldName: string;
 
     beforeAll(async () => {
       const sourceTable = await ctx.createTable({
@@ -1203,9 +1204,8 @@ describe('v2 listRecords groupBy (e2e)', () => {
       await drainOutbox();
 
       const hostSchema = await ctx.getTableById(tableId);
-      const lookupDbFieldName = hostSchema.fields.find(
-        (field) => field.id === ownerLookupFieldId
-      )?.dbFieldName;
+      lookupDbFieldName =
+        hostSchema.fields.find((field) => field.id === ownerLookupFieldId)?.dbFieldName ?? '';
       if (!lookupDbFieldName) {
         throw new Error('Owner lookup db field name is missing');
       }
@@ -1249,6 +1249,7 @@ describe('v2 listRecords groupBy (e2e)', () => {
 
     it('keeps later years first across lookup user snapshot variants', async () => {
       const params = new URLSearchParams({ tableId, fieldKeyType: FieldKeyType.Id });
+      params.set('includeGroups', 'true');
       params.set('groupBy', JSON.stringify([ownerLookupFieldId]));
       params.set('sort', JSON.stringify([{ fieldId: dateFieldId, order: 'desc' }]));
       const response = await fetch(`${ctx.baseUrl}/tables/listRecords?${params.toString()}`, {
@@ -1271,6 +1272,28 @@ describe('v2 listRecords groupBy (e2e)', () => {
         'd-2025-04',
         'd-2024-11',
       ]);
+      const groups = parsed.data.data.groups;
+      expect(groups).toEqual([
+        {
+          count: 5,
+          fields: {
+            [ownerLookupFieldId]: [
+              {
+                id: TEST_USER.id,
+                title: TEST_USER.name,
+                avatarUrl: buildUserAvatarUrl(TEST_USER.id),
+              },
+            ],
+          },
+        },
+      ]);
+      const physical = await sql<{ value: unknown }>`
+        SELECT ${sql.ref(lookupDbFieldName)} as value
+        FROM ${sql.table(`${ctx.baseId}.${tableId}`)}
+      `.execute(ctx.testContainer.db);
+      expect(physical.rows.map((row) => row.value)).toContainEqual(
+        expect.objectContaining({ avatarUrl: 'https://example.com/avatar.png' })
+      );
     });
   });
 

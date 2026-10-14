@@ -44,7 +44,6 @@ import { sql } from 'kysely';
 import { err, ok, safeTry } from 'neverthrow';
 import type { Result } from 'neverthrow';
 
-import { resolveUserAvatarUrlPrefix } from '../../shared/userAvatarUrl';
 import type { TableSchemaStatementBuilder } from '../rules/core';
 import type { TableIdentifier } from '../rules/helpers';
 import { PostgresTableSchemaFieldCreateVisitor } from './PostgresTableSchemaFieldCreateVisitor';
@@ -498,7 +497,6 @@ const buildTextToUserTransformSql = (
     return null;
   }
 
-  const avatarPrefix = resolveUserAvatarUrlPrefix();
   const mappingValues = mappings
     .map(
       (mapping) =>
@@ -508,9 +506,7 @@ const buildTextToUserTransformSql = (
     )
     .join(', ');
   const userJsonBuild = (alias: string) =>
-    `jsonb_build_object('id', ${alias}.id, 'title', ${alias}.title, 'email', ${alias}.email, 'avatarUrl', ${quoteLiteral(
-      avatarPrefix
-    )} || ${alias}.id)`;
+    `jsonb_build_object('id', ${alias}.id, 'title', ${alias}.title, 'email', ${alias}.email)`;
   const aggregationSql = isMultiple
     ? `SELECT rid, jsonb_agg(${userJsonBuild('matched_users')} ORDER BY part_idx)::text AS user_json
        FROM matched_users
@@ -2948,8 +2944,8 @@ class JsonFieldConversionVisitor extends BaseFieldConversionVisitor {
  * Source DB type: jsonb
  *
  * User field structure:
- * - Single: {"id": "...", "title": "...", "email": "...", "avatarUrl": "..."}
- * - Multiple: [{"id": "...", "title": "...", "email": "...", "avatarUrl": "..."}, ...]
+ * - Single: {"id": "...", "title": "...", "email": "..."}
+ * - Multiple: [{"id": "...", "title": "...", "email": "..."}, ...]
  */
 class UserFieldConversionVisitor extends BaseFieldConversionVisitor {
   visitSingleLineTextField(

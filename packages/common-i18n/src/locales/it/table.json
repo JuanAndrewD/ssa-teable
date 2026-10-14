@@ -1125,14 +1125,6 @@
     "collapseAllGroups": "Comprimi tutti i gruppi",
     "addToChat": "Aggiungi alla chat"
   },
-  "connection": {
-    "title": "Connessione al Database",
-    "description": "Puoi accedere direttamente al database tramite la connessione al database, inclusi tutti i tavoli sotto il progetto corrente",
-    "noPermission": "Non hai il permesso di accedere al database",
-    "connectionCountTip": "Il numero massimo di connessioni al database è <b>{{max}}</b> e le connessioni attuali sono <b>{{current}}</b>",
-    "createFailed": "Assicurati che la variabile d'ambiente PUBLIC_DATABASE_PROXY sia impostata correttamente",
-    "readonlyUnavailable": "Readonly database sharing is unavailable for this data database. Grant the Teable database user permission to create roles and grants, or use a target database that supports readonly roles."
-  },
   "view": {
     "addRecord": "Aggiungi record",
     "searchView": "Cerca vista...",
@@ -1500,6 +1492,8 @@
       "submit": "Invia"
     },
     "newChat": "Nuovo Chat",
+    "alreadyInNewChat": "Sei già in una nuova chat",
+    "initChatFailed": "Impossibile inizializzare la chat",
     "clearChat": "Cancella chat",
     "expand": "Espandi",
     "history": "Cronologia",
@@ -1536,8 +1530,11 @@
     "noFoundHistory": "Nessun chat history trovato, per favore inizia una nuova conversazione",
     "pin": "Fissa in alto",
     "unpin": "Rimuovi dai fissati",
+    "markRead": "Segna come letto",
+    "markUnread": "Segna come non letto",
+    "markAllRead": "Segna tutto come letto ({{count}})",
     "archive": "Archivia",
-    "archivedToast": "Chat archiviata. La trovi in Impostazioni › Chat archiviate.",
+    "archivedToast": "Chat archiviata",
     "unread": "Non letto",
     "timeGroup": {
       "pinned": "In evidenza",
@@ -1690,7 +1687,6 @@
       "pausedHidden": "Nuovo tentativo in pausa: apri questa scheda per riconnetterti.",
       "maxAttemptsReached": "Impossibile riconnettersi automaticamente. Aggiorna la pagina manualmente."
     },
-    "initChatFailed": "Impossibile inizializzare la chat",
     "app": {
       "loadingChatHistory": "Caricamento della cronologia della chat...",
       "generatorTitle": "Generatore di app con IA",

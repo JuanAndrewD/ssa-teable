@@ -92,7 +92,14 @@ export class FormulaSqlPgFunctions extends FormulaSqlPgExpressionBuilder {
       [FunctionName.Error]: (params) => this.errorFunc(params),
       [FunctionName.IsError]: (params) => this.isError(params),
 
-      [FunctionName.Today]: () => makeExpr('CURRENT_DATE', 'datetime', false),
+      [FunctionName.Today]: () =>
+        // Store local midnight as an instant so downstream timezone conversion preserves 00:00.
+        makeExpr(
+          this.budget
+            .sql`(((CURRENT_TIMESTAMP AT TIME ZONE ${this.formulaTimeZoneSql()})::date::timestamp) AT TIME ZONE ${this.formulaTimeZoneSql()})`,
+          'datetime',
+          false
+        ),
       [FunctionName.Now]: () => makeExpr('NOW()', 'datetime', false),
       [FunctionName.Year]: (params) => this.extractDatePart('YEAR', params),
       [FunctionName.Month]: (params) => this.extractDatePart('MONTH', params),

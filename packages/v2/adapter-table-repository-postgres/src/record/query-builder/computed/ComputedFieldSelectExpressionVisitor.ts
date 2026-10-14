@@ -42,7 +42,7 @@ import {
   resolveFormulaCompileBudget,
   type FormulaCompileBudgetConfig,
   isFormulaCompileBudgetError,
-  guardValueSql,
+  guardFormulaValueSql,
   type IPgTypeValidationStrategy,
   type SqlExpr,
   type SqlValueType,
@@ -489,7 +489,14 @@ export class ComputedFieldSelectExpressionVisitor
                 finalValueSql = budget.sql`NULLIF(BTRIM((${finalValueSql})::text), '')::double precision`;
               }
 
-              return guardValueSql(finalValueSql, expr.errorConditionSql, budget);
+              return guardFormulaValueSql(
+                finalValueSql,
+                expr,
+                fieldValueTypeResult.isOk() &&
+                  !formulaIsMultiple &&
+                  fieldValueTypeResult.value.cellValueType.equals(CellValueType.string()),
+                budget
+              );
             });
             return typedSql.map((value) => sql.raw(value).as(colAlias));
           })

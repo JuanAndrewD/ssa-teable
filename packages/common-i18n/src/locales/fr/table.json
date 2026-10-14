@@ -1125,14 +1125,6 @@
     "collapseAllGroups": "Réduire tous les groupes",
     "addToChat": "Ajouter au chat"
   },
-  "connection": {
-    "title": "Connexion à la base de données",
-    "description": "Vous pouvez accéder directement à la base de données via la connexion à la base de données, y compris toutes les tables sous le projet actuel",
-    "noPermission": "Vous n'avez pas la permission d'accéder à la base de données",
-    "connectionCountTip": "Le nombre maximum de connexions à la base de données est <b>{{max}}</b> et les connexions actuelles sont <b>{{current}}</b>",
-    "createFailed": "Veuillez vérifier que la variable d'environnement PUBLIC_DATABASE_PROXY est correctement configurée",
-    "readonlyUnavailable": "Readonly database sharing is unavailable for this data database. Grant the Teable database user permission to create roles and grants, or use a target database that supports readonly roles."
-  },
   "view": {
     "addRecord": "Ajouter un enregistrement",
     "searchView": "Rechercher une vue...",
@@ -1500,6 +1492,8 @@
       "submit": "Soumettre"
     },
     "newChat": "Nouveau Chat",
+    "alreadyInNewChat": "Vous êtes déjà dans une nouvelle conversation",
+    "initChatFailed": "Échec de l’initialisation de la conversation",
     "clearChat": "Effacer la conversation",
     "expand": "Développer",
     "history": "Historique",
@@ -1536,8 +1530,11 @@
     "noFoundHistory": "Aucun historique de chat trouvé, veuillez commencer une nouvelle conversation",
     "pin": "Épingler",
     "unpin": "Désépingler",
+    "markRead": "Marquer comme lu",
+    "markUnread": "Marquer comme non lu",
+    "markAllRead": "Tout marquer comme lu ({{count}})",
     "archive": "Archiver",
-    "archivedToast": "Conversation archivée. Retrouvez-la dans Paramètres › Conversations archivées.",
+    "archivedToast": "Conversation archivée",
     "unread": "Non lu",
     "timeGroup": {
       "pinned": "Épinglées",
@@ -1690,7 +1687,6 @@
       "pausedHidden": "Nouvelle tentative en pause — ouvrez cet onglet pour vous reconnecter.",
       "maxAttemptsReached": "Reconnexion automatique impossible. Veuillez actualiser la page manuellement."
     },
-    "initChatFailed": "Échec de l’initialisation de la conversation",
     "app": {
       "loadingChatHistory": "Chargement de l’historique de la conversation...",
       "generatorTitle": "Générateur d’applications IA",
